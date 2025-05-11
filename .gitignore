@@ -1,0 +1,23 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter notebooks
+*.ipynb
+
+# 爬下來的 PDF 或其他下載物件
+downloads/
+
+# 環境設定檔
+.env
+
+# VSCode / IDE 設定（如果有）
+.vscode/
+*.code-workspace
+
+# Docker
+Dockerfile
+
+# Wheel 目錄（若有）
+wheels/

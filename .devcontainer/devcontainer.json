@@ -1,0 +1,61 @@
+{
+    "name": "Python Development with Jupyter",
+    "build": {
+        "context": "..",
+        "dockerfile": "../Dockerfile"
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/itsmechlark/features/postgresql:1": {
+            "version": "14",
+            "username": "postgres",
+            "password": "postgres"
+        }
+    },
+    // 優化 Windows 的文件掛載性能
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/workspace",
+    "forwardPorts": [
+        8000,
+        8080,
+        5432,
+        8888
+    ],
+    "postCreateCommand": "pip install --upgrade pip wheel setuptools jupyter jupyterlab ipykernel ipywidgets matplotlib pandas numpy && pip install -r requirements.txt && sudo apt-get update && sudo apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra fonts-arphic-ukai fonts-arphic-uming fonts-ipafont-mincho fonts-ipafont-gothic fonts-unfonts-core",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.formatting.provider": "black",
+                "editor.formatOnSave": true,
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": true,
+                "python.analysis.typeCheckingMode": "basic",
+                "jupyter.alwaysTrustNotebooks": true
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.black-formatter",
+                "ms-azuretools.vscode-docker",
+                "ms-toolsai.jupyter",
+                "ms-toolsai.jupyter-keymap",
+                "ms-toolsai.jupyter-renderers",
+                "ms-toolsai.vscode-jupyter-slideshow"
+            ]
+        }
+    },
+    "remoteEnv": {
+        "DATABASE_URL": "postgresql://postgres:postgres@host.docker.internal:5432/postgres",
+        "PYTHONPATH": "/workspace",
+        "PYTHONUNBUFFERED": "1"
+    },
+    "runArgs": [
+        "--shm-size=2g",
+        "--memory=4g"
+    ],
+    // 添加下载卷
+    "mounts": [
+        "source=${localWorkspaceFolder}/downloads,target=/workspace/downloads,type=bind,consistency=cached"
+    ]
+}
