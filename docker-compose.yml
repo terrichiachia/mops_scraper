@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:13
+    container_name: twstock_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=company_data
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"  # 改用5433端口，避免與本機已有的5432衝突
+    networks:
+      - twstock-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile  # 使用您提供的 Dockerfile
+    container_name: twstock_crawler
+    shm_size: 2g  # 增加共享內存大小
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=company_data
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/company_data
+      - PYTHONUNBUFFERED=1
+      - DOWNLOAD_DIR=/app/downloads
+    volumes:
+      - ./downloads:/app/downloads
+      - ./scrape_and_print.py:/app/scrape_and_print.py
+      - ./verify_db.py:/app/verify_db.py
+    working_dir: /app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - twstock-network
+    # 使用 Dockerfile 中設定的 ENTRYPOINT 和 CMD，
+    # 無需額外指令來安裝 Python 和依賴套件
+
+volumes:
+  pgdata:
+    name: twstock_pgdata
+
+networks:
+  twstock-network:
+    driver: bridge
+    name: twstock_network

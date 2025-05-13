@@ -14,12 +14,22 @@ from dotenv import load_dotenv
 
 # 載入 .env 中的 DATABASE_URL
 load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    print("Error: 請先在環境變數或 .env 設定 DATABASE_URL", file=sys.stderr)
-    sys.exit(1)
+# 全域設定
 
-# 建立全域 Engine
+DB_CONFIG = {
+    "dbname": os.environ.get("POSTGRES_DB", "postgres"),
+    "user": os.environ.get("POSTGRES_USER", "postgres"),
+    "password": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+    "host": os.environ.get("POSTGRES_HOST", "db"),  # Docker 內部服務名
+    "port": os.environ.get("POSTGRES_PORT", "5432"),
+}
+
+default_url = (
+    f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}"
+    f"@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['dbname']}"
+)
+
+DATABASE_URL = os.getenv("DATABASE_URL", default_url)
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
 
@@ -57,7 +67,7 @@ def main():
     for sid in args.stock_ids:
         summary.append(verify_stock(sid))
 
-    # 用 pandas 好看地列印成表格
+    # 用 pandas 列印成表格
     df = pd.DataFrame(summary)
     print("\n===== 資料庫寫入檢查結果 =====\n")
     print(df.to_string(index=False))

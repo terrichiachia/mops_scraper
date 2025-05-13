@@ -1,19 +1,11 @@
-# HTTP client
-requests>=2.0
-
-# Data processing & parsing
-pandas>=2.0.0
-lxml>=4.9.0
-beautifulsoup4>=4.9.0
-html5lib>=1.1
-
-# Browser automation & PDF generation
-selenium>=4.0.0
-webdriver-manager>=3.8.5
-
-# Database ORM & driver
-SQLAlchemy>=2.0.40
-psycopg2-binary>=2.9.10
-
-# Environment variables
-python-dotenv>=0.21.0
+selenium==4.17.2
+webdriver-manager==4.0.1
+pandas>=2.0.0,<2.1.0
+sqlalchemy==2.0.25
+psycopg2-binary==2.9.9
+beautifulsoup4==4.12.2
+lxml==5.1.0
+html5lib==1.1
+python-dotenv==1.0.0
+requests==2.31.0
+urllib3
